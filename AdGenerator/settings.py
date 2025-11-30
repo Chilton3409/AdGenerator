@@ -15,7 +15,7 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 load_dotenv()
-META_AI_TOKEN = os.environ.get('META_AI_TOKEN')
+GEMINI_API_KEY = os.environ.get("Gemini_api_key")
 #STRIPE_LIVE_PUBLIC_KEY = 'your_live_public_key'
 #STRIPE_LIVE_SECRET_KEY = 'your_live_secret_key'
 
