@@ -1,0 +1,20 @@
+<!-- register.html -->
+  {% extends 'ad_creation/home.html' %}
+{% block content %}
+  <div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+      <div class="col-md-5">
+        <div class="card">
+          <div class="card-body">
+            <h1 class="card-title text-center mb-4">Register</h1>
+            <form method="post">
+                 {% csrf_token %}
+              {{ form.as_p }}
+              <button type="submit" class="btn btn-primary w-100">Register</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

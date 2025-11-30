@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ad Created</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        pre {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        a {
+            text-decoration: none;
+            color: #4CAF50;
+        }
+        a:hover {
+            color: #3e8e41;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ad Created</h1>
+    <p>Your ad has been created and saved to the file.</p>
+    <pre>{{ advertisement.prompt }}</pre>
+    <p>{{advertisement.content}}</p>
+    <p><a href="{% url 'create_ad' %}">Create another ad</a></p>
+</body>
+</html>

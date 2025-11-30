@@ -1,0 +1,23 @@
+{% extends 'ad_creation/home.html' %}
+{% block content %}
+  <div class="container mt-5 mb-5">
+    <h1 class="mb-4">Advertisement Detail</h1>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">The prompt:</h5>
+        <p class="card-text">{{ advertisement.prompt }}</p>
+        <h5 class="card-title">The ad:</h5>
+        <p class="card-text">{{ advertisement.content }}</p>
+        <h5 class="card-title">Created at:</h5>
+        <p class="card-text">{{ advertisement.created_at }}</p>
+       
+      </div>
+    </div>
+    <div class="mt-4">
+      <a href="{% url 'ad_update' advertisement.pk %}" class="btn btn-primary">Edit Prompt and Regenerate Ad</a>
+      <a href="{% url 'ad_delete' advertisement.pk %}" class="btn btn-danger">Delete</a>
+      <a href="{% url 'dashboard' %}" class="btn btn-info">Dashboard</a>
+    </div>
+    
+  </div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'ad_creation/home.html' %}
+{% block content %}
+  <div class="container mt-5">
+    <h1 class="mb-4">Dashboard</h1>
+    <p class="lead">Welcome, {{ user.email}}!</p>
+     
+    
+     <a href="{% url 'password_reset' %}">Forgot password email reset?</a>
+    
+    
+    <h2 class="mb-3">Your Advertisements</h2>
+    <ul class="list-group list-group-flush">
+      {% for advertisement in advertisements %}
+        <li class="list-group-item">
+          <a href="{% url 'ad_detail' advertisement.pk %}">{{ advertisement.prompt }}</a>
+        </li>
+      {% empty %}
+        <li class="list-group-item">No advertisements found.</li>
+      {% endfor %}
+    </ul>
+    <p class="mt-4">
+      <a href="{% url 'generate_advertisement' %}" class="btn btn-primary">Generate New Ad</a>
+    </p>
+  </div>
+ 
+{% endblock %}

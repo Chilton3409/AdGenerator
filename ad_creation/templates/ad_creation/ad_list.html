@@ -1,0 +1,14 @@
+{% extends 'ad_creation/home.html' %}
+{% block content %}
+  <h1>Advertisements</h1>
+  <ul>
+    {% for ad in advertisement_list %}
+      <li>
+        <a href="{% url 'ad_detail' ad.pk %}">{{ ad.prompt }}</a>
+        <a href="{% url 'ad_delete' advertisement.pk %}">Delete</a>
+      </li>
+    {% empty %}
+      <li>No advertisements found.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

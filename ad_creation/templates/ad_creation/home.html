@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdGenerator</title>
+    <a class="navbar-brand" href="{% url 'home' %}">AdGenerator</a>  
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdGenerator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>                                                                                                                                                                                         
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">AdGenerator</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=""></button>                                                                                                              
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'generate_advertisement' %}">Generate Ad</a></li>
+                </ul>
+             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+    {% if user.is_authenticated %}
+        <!-- Links for logged-in users -->
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+        </li>
+        
+        {% if user.is_subscribed %}
+        <li class="nav-item"><a class="nav-link" href="{% url 'cancel_subscription' %}">Cancel Subscription</a></li>
+         {% else %}
+        <li class="nav-item"><a class="nav-link" href="{% url 'subscribe' %}">Subscribe</a></li>
+       
+        {% endif %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+        </li>
+    {% else %}
+        <!-- Links for logged-out (anonymous) users -->
+        <li class="nav-item">
+            <!-- Note: 'two_factor:login' might be correct depending on your setup, use your actual login URL name -->
+            <a class="nav-link" href="{% url 'two_factor:login' %}">Login</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'register' %}">Register</a>
+        </li>
+    {% endif %}
+            </div>
+        </div>
+    </nav>
+    {% block content %}
+    <div class="container mt-5">
+    <div class="row justify-content-center text-center mb-5">
+        <div class="col-md-8">
+            <h1 class="display-4 mb-4">Welcome to AdGenerator!</h1>
+            
+            <!-- Alert for Test Information -->
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Heads Up!</strong> This subscription feature is for demonstration purposes only. 
+                <strong>DO NOT use real credit card information.</strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-- Test Card Information Table -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header">
+                    <h5 class="my-0 font-weight-normal">Stripe Test Card Information (Successful Transactions)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Card Brand</th>
+                                    <th>Test Card Number</th>
+                                    <th>CVC</th>
+                                    <th>Expiry Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Visa</td>
+                                    <td>`4242 4242 4242 4242`</td>
+                                    <td>Any 3 digits</td>
+                                    <td>Any future date</td>
+                                </tr>
+                                <tr>
+                                    <td>Mastercard</td>
+                                    <td>`5555 5555 5555 4444`</td>
+                                    <td>Any 3 digits</td>
+                                    <td>Any future date</td>
+                                </tr>
+                                <tr>
+                                    <td>American Express</td>
+                                    <td>`3782 822463 10005`</td>
+                                    <td>Any 4 digits</td>
+                                    <td>Any future date</td>
+                                </tr>
+                                <tr>
+                                    <td>Discover</td>
+                                    <td>`6011 1111 1111 1117`</td>
+                                    <td>Any 3 digits</td>
+                                    <td>Any future date</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+                <p class="lead">Unlock the Power of Advertising. Create stunning, custom ads in minutes with our AI-powered generator. Stand out from the crowd and drive results with our intuitive tool. Try it now and elevate your marketing game! Get Started Today!</p>
+                <a href="{% url 'generate_advertisement' %}" class="btn btn-primary btn-lg">Generate Ad</a>
+            </div>
+        </div>
+        <div class="row justify-content-center mb-5">
+            <div class="col-md-8">
+                <h2 class="mb-4">What We Offer</h2>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"> AI-Driven Creativity: Unleash the power of Meta AI to craft unique, high-performing ads </li>
+                    <li class="list-group-item">Endless Customization: Tailor your ads to your brand's voice, style, and goals Lightning-Fast Production: Get stunning ads in minutes, not hours or days</li>
+                    <li class="list-group-item">Effortless Design: Our intuitive interface makes it easy to create professional-grade ads, no design experience needed</li>
+                    <li class="list-group-item">Data-Driven Results: Optimize your ads for maximum impact, engagement, and ROI</li>
+                </ul>
+            </div>
+        </div>
+        <div class="row justify-content-center mb-5">
+            <div class="col-md-8">
+                <h2 class="mb-4">What Our Users Say</h2>
+                <blockquote class="blockquote">
+                    <p>AdGenerator has revolutionized my advertising strategy!</p>
+                    <cite class="blockquote-footer">John Doe, Marketing Manager</cite>
+                </blockquote>
+            </div>
+        </div>
+        {% endblock content %}
+    </div>
+   
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+</body>
+</html>

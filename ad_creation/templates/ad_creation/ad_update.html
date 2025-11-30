@@ -1,0 +1,21 @@
+{% extends 'ad_creation/home.html' %}
+{% block content %}
+  <div class="container mt-5 mb-5">
+    <h1 class="mb-4">Update Ad</h1>
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="id_prompt" class="form-label">Prompt:</label>
+        <textarea class="form-control" id="id_prompt" name="prompt" rows="10">{{ form.prompt.value }}</textarea>
+      </div>
+      <div class="mb-3">
+        <label for="id_filename" class="form-label">Enter a name for your advertisement:</label>
+        <input type="text" class="form-control" id="id_filename" name="filename" value="{{ form.filename.value }}">
+      </div>
+      <button type="submit" class="btn btn-primary">Regenerate Ad</button>
+      <a href="{% url 'dashboard' %}" class="btn btn-info">Dashboard</a>
+    </div>
+    </form>
+   
+  </div>
+{% endblock %}

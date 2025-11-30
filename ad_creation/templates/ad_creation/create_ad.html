@@ -1,0 +1,43 @@
+{% extends 'ad_creation/home.html' %}
+
+{% block content %}
+
+  <div class="container mt-5 mb-5">
+      <!-- your content here -->
+       <!-- Area to display results and status -->
+    <div class="mt-4">
+        <h2>Generated Advertisement:</h2>
+        <div id="responseArea" class="alert alert-info" role="alert" style="white-space: pre-wrap;">
+            <!-- Display the 'advertisement' content passed from the view context -->
+            {% if advertisement %}
+                {{ advertisement.content }}
+            {% else %}
+                Enter a prompt above and click 'Create Ad' to generate content.
+            {% endif %}
+        </div>
+    </div>
+
+    </div>
+
+  <div class="container mt-5">
+    <h1 class="mb-4">Create Ad</h1>
+    
+    <!-- Updated Form: Use method="POST" and point 'action' to the view URL name -->
+    <form method="POST" action="{% url 'generate_advertisement' %}">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="prompt" class="form-label">Prompt:</label>
+        <textarea id="promptInput" name="prompt" class="form-control" rows="10"></textarea>
+      </div>
+      <div class="mb-3">
+        <label for="filename" class="form-label">Enter a name for your advertisement:</label>
+        <!-- The filename input is present, but your current view doesn't save it anywhere -->
+        <input type="text" id="filenameInput" name="filename" class="form-control">
+      </div>
+      <button type="submit" class="btn btn-primary">Create Ad</button>
+    </form>
+    
+    
+  
+  </div>
+  {% endblock %}
