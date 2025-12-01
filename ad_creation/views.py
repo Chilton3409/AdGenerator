@@ -209,16 +209,35 @@ def cancel_view(request):
 def cancel_subscription(request):
   
     stripe.api_key = os.environ.get('SECRET_KEY') 
+     # Retrieve the subscription ID from the currently logged-in user object
     subscription_id = request.user.stripe_subscription_id
-    customer_id = request.user.stripe_customer_id
-    # This cancels the subscription immediately and stops all future billing
-    #stripe.Subscription.modify(subscription_id)
-    #will play around with the stripe api to figure this out
-    
-    message = "You have immediately cancelled your subscription."
-    # You may also want to update the user's status in your local database here
-    # e.g., request.user.is_subscribed = False; request.user.save()
-    return render(request, 'ad_creation/cancel_subscription.html', {'message': message})
+
+    if not subscription_id:
+        # Handle the case where the user somehow doesn't have a subscription ID
+        return render(request, 'ad_creation/error.html', {'error': 'No active subscription found.'})
+
+    try:
+        # Call the Stripe API to cancel the subscription
+        # This cancels the subscription immediately by default (at_period_end=False)
+        # You can set at_period_end=True if you want it to cancel at the end of the current billing cycle
+        cancelled_subscription = stripe.Subscription.delete(subscription_id)
+
+        # Update the user's status in your local database
+        request.user.subscription_status = 'cancelled'
+        # Optional: clear the subscription ID from your local database if you require a new one for resubscription
+        # request.user.stripe_subscription_id = None
+        request.user.save()
+
+        message = f"Your subscription ({cancelled_subscription.id}) has been immediately cancelled."
+        # Redirect to a confirmation page
+        return render(request, 'ad_creation/cancel_subscription.html', {'message': message})
+
+    except stripe.error.StripeError as e:
+        # Handle specific Stripe API errors (e.g., invalid ID, network error)
+        return render(request, 'ad_creation/error.html', {'error': f"Stripe API error: {str(e)}"})
+    except Exception as e:
+        # Handle other unexpected errors
+        return render(request, 'ad_creation/error.html', {'error': f"An unexpected error occurred: {str(e)}"})
 
 @login_required
 def generate_advertisement(request):
