@@ -88,13 +88,6 @@ class CustomPasswordResetView(PasswordResetView):
     success_url = reverse_lazy('ad_creation/password_reset_done')
     
     
-
-
-
-
-
-
-
 # After verifying the user's identity, you can allow them to reset their password
 @otp_required
 @login_required
@@ -209,18 +202,40 @@ def cancel_view(request):
         return render(request, 'ad_creation/error.html', {'error': str(e)})
 @login_required
 def cancel_subscription(request):
+    try:
+        # Ensure your Stripe secret key is set correctly from environment variables
+        stripe.api_key = os.environ.get('SECRET_KEY') # Make sure this environment variable name is correct
 
-    stripe.api_key = os.environ.get('SECRET_KEY')
-    subscription_id = request.user.stripe_subscription_id
-    customer_id = request.user.stripe_customer_id
-    # This cancels the subscription immediately and stops all future billing
-    #stripe.Subscription.modify(subscription_id)
-    #will play around with the stripe api to figure this out
+        subscription_id = request.user.stripe_subscription_id
+        
+        if not subscription_id:
+            message = "You do not have an active subscription to cancel."
+            return render(request, 'ad_creation/cancel_subscription.html', {'message': message})
 
-    message = "You have immediately cancelled your subscription."
-    # You may also want to update the user's status in your local database here
-    # e.g., request.user.is_subscribed = False; request.user.save()
-    return render(request, 'ad_creation/cancel_subscription.html', {'message': message})
+        # --- Stripe API Call ---
+        # Cancels the subscription immediately and stops all future billing.
+        # The 'deleted' object returned by Stripe confirms the cancellation.
+        deleted_subscription = stripe.Subscription.delete(subscription_id)
+
+        # --- Local Database Update ---
+        # Update your local User model fields to reflect the cancellation
+        request.user.subscription_status = 'cancelled'
+        # Optional: Clear the subscription ID since it is no longer valid
+        request.user.stripe_subscription_id = None 
+        request.user.save()
+
+        message = f"Your subscription ({subscription_id}) has been immediately cancelled."
+        return render(request, 'ad_creation/cancel_subscription.html', {'message': message})
+
+    except stripe.error.StripeError as e:
+        # Handle specific Stripe API errors (e.g., subscription not found)
+        logging.exception("Stripe API Error during subscription cancellation: %s", e)
+        return render(request, 'ad_creation/error.html', {'error': str(e)})
+        
+    except Exception as e:
+        # Handle general errors
+        logging.exception("An unexpected error occurred during cancellation: %s", e)
+        return render(request, 'ad_creation/error.html', {'error': str(e)})
 
 @login_required
 def generate_advertisement(request):
