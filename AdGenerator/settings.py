@@ -15,11 +15,11 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 load_dotenv()
-GEMINI_API_KEY = os.environ.get("Gemini_api_key")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 #STRIPE_LIVE_PUBLIC_KEY = 'your_live_public_key'
 #STRIPE_LIVE_SECRET_KEY = 'your_live_secret_key'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
-#SECRET_KEY = os.environ.get('SECRET_KEY')
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = 'ad_creation.User'
 AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend']
@@ -44,7 +44,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -71,7 +71,7 @@ INSTALLED_APPS = [
     'ninja',
     'anymail',
     # Optional: for phone/email based 2FA
-    
+
 ]
 
 MIDDLEWARE = [
@@ -84,7 +84,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django_otp.middleware.OTPMiddleware',
-    
+
 ]
 
 ROOT_URLCONF = "AdGenerator.urls"

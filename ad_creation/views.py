@@ -32,7 +32,7 @@ from django.urls import reverse_lazy
 from djstripe.models import Session
 from djstripe.models import WebhookEndpoint
 from djstripe.models import WebhookEventTrigger
-import stripe 
+import stripe
 from stripe import Product
 from dotenv import load_dotenv
 load_dotenv()
@@ -41,12 +41,12 @@ from django.http import JsonResponse
 import json
 from django.http import JsonResponse
 
-def home(request): 
+def home(request):
     return render(request, 'ad_creation/home.html')
 
 def register_view(request):
     try:
-        
+
         if request.method == 'POST':
             form = RegisterForm(request.POST)
             if form.is_valid():
@@ -59,10 +59,10 @@ def register_view(request):
     except Exception as e:
         logging.exception(msg=e)
         return render(request, 'ad_creation/error.html', {'error': e})
-    
+
 def register_and_setup_2fa(request):
     if request.method == 'POST':
-        
+
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
@@ -75,24 +75,30 @@ def register_and_setup_2fa(request):
 class CustomPasswordResetView(PasswordResetView):
     # These attributes are read by the base PasswordResetView logic.
     # The email backend settings are picked up automatically from settings.py
-    
+
     # Optional: Customize the email template used for the body
     # email_template_name = 'ad_creation/password_reset_email.html'
-    
+
     # Optional: Customize the subject line (must be a string or function)
     # subject_template_name = 'ad_creation/password_reset_subject.txt'
-    
-    # Optional: Set the from email address explicitly if needed, otherwise it uses settings.DEFAULT_FROM_EMAIL
-    # from_email = settings.DEFAULT_FROM_EMAIL 
 
+    # Optional: Set the from email address explicitly if needed, otherwise it uses settings.DEFAULT_FROM_EMAIL
+    # from_email = settings.DEFAULT_FROM_EMAIL
+
+<<<<<<< HEAD
     success_url = reverse_lazy('ad_creation/password_reset_done')
     
     
+=======
+    success_url = reverse_lazy('password_reset_done')
+>>>>>>> 6d95d4c994bc6d24711d69dec499b3bdadfd5a4f
 
 
 
 
-   
+
+
+
 # After verifying the user's identity, you can allow them to reset their password
 @otp_required
 @login_required
@@ -113,7 +119,7 @@ class CustomPasswordResetView(PasswordResetView):
 
 class CustomPasswordResetDoneView(PasswordResetDoneView):
     template_name = 'ad_creation/password_reset_done.html'
-    
+
 class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     template_name = 'ad_creation/password_reset_confirm.html'
     success_url = reverse_lazy('password_reset_complete')
@@ -123,7 +129,7 @@ class CustomPasswordResetCompleteView(PasswordResetCompleteView):
 
 def login_view(request):
     try:
-        
+
         if request.method == 'POST':
             form = LoginForm(data=request.POST)
             if form.is_valid():
@@ -139,17 +145,17 @@ def login_view(request):
     except Exception as e:
         logging.exception(msg=e)
         return render(request, 'ad_creation/error.html', {'error': e})
-    
+
 
 def logout_view(request):
     try:
-        
+
         logout(request)
         return redirect('home')
     except Exception as e:
         logging.exception(msg=e)
         return render(request, 'ad_creation/error.html', {'error': e})
-    
+
 @login_required
 def create_checkout_session(request):
     try:
@@ -158,11 +164,11 @@ def create_checkout_session(request):
         # Here, we assume the price ID corresponds to an object in dj-stripe
         secret_key = os.environ.get('SECRET_KEY')
         stripe.api_key = secret_key
-        
-        
-       
+
+
+
         # Use the standard Stripe API to create the Checkout Session
-        
+
         session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             line_items=[{
@@ -170,19 +176,19 @@ def create_checkout_session(request):
                 'quantity': 1,
             }],
             mode='subscription',
-            success_url='http://127.0.0.1:8000/success?session_id={CHECKOUT_SESSION_ID}',
-            cancel_url='http://127.0.0.1:8000/cancel?session_id={CHECKOUT_SESSION_ID}'
+            success_url='https://gallbegalled.pythonanywhere.com/success?session_id={CHECKOUT_SESSION_ID}',
+            cancel_url='https://gallbegalled.pythonanywhere.com/cancel?session_id={CHECKOUT_SESSION_ID}'
         )
         return redirect(session.url)
     except Exception as e:
         logging.exception(msg=e)
-       
+
         return render(request, 'ad_creation/error.html', {'error': e})
     except Exception as e:
         logging.exception("Failed to create Stripe Checkout session: %s", e)
         return render(request, 'ad_creation/error.html', {'error': e})
 
-    
+
 def success_view(request):
     session_id = request.GET.get('session_id')
     if session_id is None:
@@ -199,57 +205,38 @@ def success_view(request):
     except Exception as e:
         return render(request, 'ad_creation/error.html', {'error': str(e)})
 def cancel_view(request):
-    
+
     try:
-        
+
         return render(request, 'ad_creation/cancel.html')
     except Exception as e:
         return render(request, 'ad_creation/error.html', {'error': str(e)})
 @login_required
 def cancel_subscription(request):
-  
-    stripe.api_key = os.environ.get('SECRET_KEY') 
-     # Retrieve the subscription ID from the currently logged-in user object
+
+    stripe.api_key = os.environ.get('SECRET_KEY')
     subscription_id = request.user.stripe_subscription_id
+    customer_id = request.user.stripe_customer_id
+    # This cancels the subscription immediately and stops all future billing
+    #stripe.Subscription.modify(subscription_id)
+    #will play around with the stripe api to figure this out
 
-    if not subscription_id:
-        # Handle the case where the user somehow doesn't have a subscription ID
-        return render(request, 'ad_creation/error.html', {'error': 'No active subscription found.'})
-
-    try:
-        # Call the Stripe API to cancel the subscription
-        # This cancels the subscription immediately by default (at_period_end=False)
-        # You can set at_period_end=True if you want it to cancel at the end of the current billing cycle
-        cancelled_subscription = stripe.Subscription.delete(subscription_id)
-
-        # Update the user's status in your local database
-        request.user.subscription_status = 'cancelled'
-        # Optional: clear the subscription ID from your local database if you require a new one for resubscription
-        # request.user.stripe_subscription_id = None
-        request.user.save()
-
-        message = f"Your subscription ({cancelled_subscription.id}) has been immediately cancelled."
-        # Redirect to a confirmation page
-        return render(request, 'ad_creation/cancel_subscription.html', {'message': message})
-
-    except stripe.error.StripeError as e:
-        # Handle specific Stripe API errors (e.g., invalid ID, network error)
-        return render(request, 'ad_creation/error.html', {'error': f"Stripe API error: {str(e)}"})
-    except Exception as e:
-        # Handle other unexpected errors
-        return render(request, 'ad_creation/error.html', {'error': f"An unexpected error occurred: {str(e)}"})
+    message = "You have immediately cancelled your subscription."
+    # You may also want to update the user's status in your local database here
+    # e.g., request.user.is_subscribed = False; request.user.save()
+    return render(request, 'ad_creation/cancel_subscription.html', {'message': message})
 
 @login_required
 def generate_advertisement(request):
     # Ensure SECRET_KEY is accessed correctly (best practice is settings.STRIPE_SECRET_KEY)
-    stripe.api_key = os.environ.get('SECRET_KEY') 
-    
+    stripe.api_key = os.environ.get('SECRET_KEY')
+
     if request.user.subscription_status != 'active':
         # Redirect to subscription page if not active
         return redirect('subscribe')
-        
+
     if request.method == 'POST':
-        
+
         # Check if the request is a JSON request (from our fetch code)
         if request.content_type == 'application/json':
             data = json.loads(request.body)
@@ -263,14 +250,14 @@ def generate_advertisement(request):
 
 
         else:
-            
+
             prompt = request.POST.get('prompt')
         # We can also get the filename if you want to use it in the view:
-            filename = request.POST.get('filename') 
+            filename = request.POST.get('filename')
 
             service = AdvertisingAssistantService()
             advertisement_content = service.generate_advertisement(prompt)
-            
+
             try:
                 # Note: This still requires your 'Advertisement' model to have the 'user' field (see previous fix).
                 advertisement = Advertisement.objects.create(
@@ -298,13 +285,13 @@ class AdUpdateView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         try:
-            
+
             advertisement = form.save(commit=False)
             service = AdvertisingAssistantService()
             advertisement.content = service.generate_advertisement(advertisement.prompt)
             advertisement.save()
             return redirect('ad_detail', pk=advertisement.pk)
-        
+
         except Exception as e:
             logging.exception(msg=e)
             return render(self.request, 'ad_creation/error.html', {'error': e})
@@ -313,15 +300,15 @@ class AdListView(LoginRequiredMixin,ListView):
     template_name = 'ad_creation/ad_list.html'
     def get_queryset(self):
         return Advertisement.objects.filter(created_by=self.request.user).order_by('-created_at')
-    
-    
+
+
 class AdDetailView(LoginRequiredMixin,DetailView):
     model = Advertisement
     template_name = 'ad_creation/ad_detail.html'
-    
+
     def get_queryset(self):
         try:
-            
+
             return Advertisement.objects.filter(created_by=self.request.user)
         except Exception as e:
             logging.exception(msg=e)
@@ -331,7 +318,7 @@ class AdDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('dashboard')
     def get_queryset(self):
         try:
-            
+
             return Advertisement.objects.filter(created_by=self.request.user)
         except Exception as e:
             logging.exception(msg=e)
@@ -339,10 +326,10 @@ class AdDeleteView(LoginRequiredMixin, DeleteView):
 class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'ad_creation/dashboard.html'
     def get_context_data(self, **kwargs):
-        
+
         context = super().get_context_data(**kwargs)
         try:
-            
+
             context['advertisements'] = Advertisement.objects.filter(created_by=self.request.user)
             return context
         except Exception as e:
