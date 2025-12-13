@@ -85,13 +85,9 @@ class CustomPasswordResetView(PasswordResetView):
     # Optional: Set the from email address explicitly if needed, otherwise it uses settings.DEFAULT_FROM_EMAIL
     # from_email = settings.DEFAULT_FROM_EMAIL
 
-<<<<<<< HEAD
     success_url = reverse_lazy('ad_creation/password_reset_done')
     
     
-=======
-    success_url = reverse_lazy('password_reset_done')
->>>>>>> 6d95d4c994bc6d24711d69dec499b3bdadfd5a4f
 
 
 
