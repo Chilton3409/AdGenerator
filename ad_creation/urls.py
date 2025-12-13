@@ -33,5 +33,5 @@ urlpatterns = [
     path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='ad_creation/password_reset_done.html'), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', views.CustomPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     # The 'complete' view below was a duplicate and is covered by the 'auth_views' version if you use Django defaults
-    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='your_app_name/password_reset_complete.html'), name='password_reset_complete'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='ad_creation/password_reset_complete.html'), name='password_reset_complete'),
 ]
